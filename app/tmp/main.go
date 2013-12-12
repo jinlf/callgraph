@@ -5,9 +5,12 @@ import (
 	"flag"
 	"reflect"
 	"github.com/robfig/revel"
-	_ "github.com/callgraph/app"
-	controllers "github.com/callgraph/app/controllers"
+	_ "github.com/jinlf/callgraph/app"
+	controllers "github.com/jinlf/callgraph/app/controllers"
+	tests "github.com/jinlf/callgraph/tests"
 	controllers0 "github.com/robfig/revel/modules/static/app/controllers"
+	_ "github.com/robfig/revel/modules/testrunner/app"
+	controllers1 "github.com/robfig/revel/modules/testrunner/app/controllers"
 )
 
 var (
@@ -43,6 +46,7 @@ func main() {
 					&revel.MethodArg{Name: "func_name", Type: reflect.TypeOf((*string)(nil)) },
 					&revel.MethodArg{Name: "search_type", Type: reflect.TypeOf((*string)(nil)) },
 					&revel.MethodArg{Name: "call_depth", Type: reflect.TypeOf((*string)(nil)) },
+					&revel.MethodArg{Name: "direction", Type: reflect.TypeOf((*string)(nil)) },
 					&revel.MethodArg{Name: "data_source", Type: reflect.TypeOf((*string)(nil)) },
 				},
 				RenderArgNames: map[int][]string{ 
@@ -54,6 +58,7 @@ func main() {
 					&revel.MethodArg{Name: "func_name", Type: reflect.TypeOf((*string)(nil)) },
 					&revel.MethodArg{Name: "search_type", Type: reflect.TypeOf((*string)(nil)) },
 					&revel.MethodArg{Name: "call_depth", Type: reflect.TypeOf((*uint)(nil)) },
+					&revel.MethodArg{Name: "direction", Type: reflect.TypeOf((*string)(nil)) },
 					&revel.MethodArg{Name: "data_source", Type: reflect.TypeOf((*string)(nil)) },
 				},
 				RenderArgNames: map[int][]string{ 
@@ -86,8 +91,42 @@ func main() {
 			
 		})
 	
+	revel.RegisterController((*controllers1.TestRunner)(nil),
+		[]*revel.MethodType{
+			&revel.MethodType{
+				Name: "Index",
+				Args: []*revel.MethodArg{ 
+				},
+				RenderArgNames: map[int][]string{ 
+					46: []string{ 
+						"testSuites",
+					},
+				},
+			},
+			&revel.MethodType{
+				Name: "Run",
+				Args: []*revel.MethodArg{ 
+					&revel.MethodArg{Name: "suite", Type: reflect.TypeOf((*string)(nil)) },
+					&revel.MethodArg{Name: "test", Type: reflect.TypeOf((*string)(nil)) },
+				},
+				RenderArgNames: map[int][]string{ 
+					69: []string{ 
+						"error",
+					},
+				},
+			},
+			&revel.MethodType{
+				Name: "List",
+				Args: []*revel.MethodArg{ 
+				},
+				RenderArgNames: map[int][]string{ 
+				},
+			},
+			
+		})
+	
 	revel.DefaultValidationKeys = map[string]map[int]string{ 
-		"github.com/callgraph/app/controllers.App.Search": { 
+		"github.com/jinlf/callgraph/app/controllers.App.Search": { 
 			121: "func_name",
 			124: "search_type",
 			127: "call_depth",
@@ -95,6 +134,7 @@ func main() {
 		},
 	}
 	revel.TestSuites = []interface{}{ 
+		(*tests.AppTest)(nil),
 	}
 
 	revel.Run(*port)

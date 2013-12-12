@@ -44,6 +44,16 @@
   <th>(0 for unlimited, but 0 or more than 4 is not recommended)</th>
       </tr>
       <tr>
+        <th>Director:</th>
+        <th>
+          <select name="direction">
+            <option value="LR" {{if eq .flash.direction "LR"}}selected{{end}}>Left to Right</option>
+            <option value="RL" {{if eq .flash.direction "RL"}}selected{{end}}>Right to Left</option>
+            <option value="BT" {{if eq .flash.direction "BT"}}selected{{end}}>Botton to Top</option>
+          </select>
+        </th>
+      </tr>
+      <tr>
         <th>Data source:</th>
         <th>
           <select name="data_source">

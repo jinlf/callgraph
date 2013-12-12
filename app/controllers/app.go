@@ -117,7 +117,7 @@ func (c App) Index() revel.Result {
 	return c.Render(fnames)
 }
 
-func (c App) Search(func_name, search_type, call_depth, data_source string) revel.Result {
+func (c App) Search(func_name, search_type, call_depth, direction, data_source string) revel.Result {
   c.Validation.Required(func_name).Message("Function name is required")
   c.Flash.Out["func_name"] = func_name
 
@@ -143,7 +143,9 @@ func (c App) Search(func_name, search_type, call_depth, data_source string) reve
     return c.Redirect(App.Index)
   }
 
-  c.Flash.Out["graph"] = fmt.Sprintf("/App/CreateImage?func_name=%s&search_type=%s&call_depth=%d&data_source=%s", func_name, search_type, callDepth, data_source)
+  c.Flash.Out["direction"] = direction
+
+  c.Flash.Out["graph"] = fmt.Sprintf("/App/CreateImage?func_name=%s&search_type=%s&call_depth=%d&direction=%s&data_source=%s", func_name, search_type, callDepth, direction, data_source)
 
 	return c.Redirect(App.Index)
 }
@@ -152,11 +154,12 @@ type dynamicImage struct {
   funcName string
   searchType string
   callDepth uint
+  direction string
   dataSource string
 }
 
-func NewDynamicImage(func_name, search_type string, call_depth uint, data_source string) dynamicImage {
-  return dynamicImage{func_name, search_type, call_depth, data_source}
+func NewDynamicImage(func_name, search_type string, call_depth uint, direction, data_source string) dynamicImage {
+  return dynamicImage{func_name, search_type, call_depth, direction, data_source}
 }
 
 func (r dynamicImage) calcCalls(source *arrowSlice, func_name string, call_depth uint, buffer *bytes.Buffer, visitedCalls sort.StringSlice) {
@@ -196,7 +199,9 @@ func (r dynamicImage) Apply(req *revel.Request, resp *revel.Response) {
   }
   buffer.WriteString("}")
 
-  cmdDot := exec.Command("dot", "-Grankdir=TD", "-Tpng")
+  /* set direction */
+  param0 :="-Grankdir=" + r.direction
+  cmdDot := exec.Command("dot", param0, "-Tpng")
   cmdDot.Stdin = bytes.NewReader(buffer.Bytes())
 
 
@@ -211,8 +216,8 @@ func (r dynamicImage) Apply(req *revel.Request, resp *revel.Response) {
   resp.Out.Write(output)
 }
 
-func (c App) CreateImage(func_name, search_type string, call_depth uint, data_source string) revel.Result {
-	return NewDynamicImage(func_name, search_type, call_depth, data_source)
+func (c App) CreateImage(func_name, search_type string, call_depth uint, direction, data_source string) revel.Result {
+	return NewDynamicImage(func_name, search_type, call_depth, direction, data_source)
 }
 
 
