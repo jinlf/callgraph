@@ -11,6 +11,7 @@ import (
   "strings"
   "bytes"
   "sort"
+  "net/url"
 )
 
 type arrow struct {
@@ -145,7 +146,7 @@ func (c App) Search(func_name, search_type, call_depth, direction, data_source s
 
   c.Flash.Out["direction"] = direction
 
-  c.Flash.Out["graph"] = fmt.Sprintf("/App/CreateImage?func_name=%s&search_type=%s&call_depth=%d&direction=%s&data_source=%s", func_name, search_type, callDepth, direction, data_source)
+  c.Flash.Out["graph"] = fmt.Sprintf("/App/CreateImage?func_name=%s&search_type=%s&call_depth=%d&direction=%s&data_source=%s", url.QueryEscape(func_name), search_type, callDepth, direction, data_source)
 
 	return c.Redirect(App.Index)
 }
@@ -217,7 +218,11 @@ func (r dynamicImage) Apply(req *revel.Request, resp *revel.Response) {
 }
 
 func (c App) CreateImage(func_name, search_type string, call_depth uint, direction, data_source string) revel.Result {
-	return NewDynamicImage(func_name, search_type, call_depth, direction, data_source)
+        new_func_name, err := url.QueryUnescape(func_name)
+        if err != nil {
+            new_func_name = func_name
+        }
+	return NewDynamicImage(new_func_name, search_type, call_depth, direction, data_source)
 }
 
 

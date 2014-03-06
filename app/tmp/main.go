@@ -35,7 +35,7 @@ func main() {
 				Args: []*revel.MethodArg{ 
 				},
 				RenderArgNames: map[int][]string{ 
-					117: []string{ 
+					118: []string{ 
 						"fnames",
 					},
 				},
@@ -127,10 +127,10 @@ func main() {
 	
 	revel.DefaultValidationKeys = map[string]map[int]string{ 
 		"github.com/jinlf/callgraph/app/controllers.App.Search": { 
-			121: "func_name",
-			124: "search_type",
-			127: "call_depth",
-			134: "data_source",
+			122: "func_name",
+			125: "search_type",
+			128: "call_depth",
+			135: "data_source",
 		},
 	}
 	revel.TestSuites = []interface{}{ 
